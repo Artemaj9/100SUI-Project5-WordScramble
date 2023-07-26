@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var errorTitle = ""
     @State private var errorMessage = ""
     @State private var showingError = false
+    @State private var score = 0
     
     let people = ["Finn", "Leia", "Luke", "Ray"]
     var body: some View {
@@ -33,6 +34,7 @@ struct ContentView: View {
                         }
                     }
                 }
+        
             }
             .navigationTitle(rootWord)
             .onSubmit (addNewWord)
@@ -42,12 +44,32 @@ struct ContentView: View {
             } message: {
                 Text(errorMessage)
             }
+            .toolbar {
+                HStack {
+                    Button("Start game") {
+                        startGame()
+                        score = 0
+                    }
+                    Button("Clear") {
+                        withAnimation {
+                            usedWords.removeAll()
+                            score = 0
+                        }
+                    }
+                }
         }
+        
+        }
+        
+        Text("Your score: \(score)")
     }
     
     func addNewWord() {
         let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        guard answer.count > 0 else { return }
+        guard answer.count >= 3 else {
+            wordError(title: "Word is too short", message: "The word must contain at least 3 characters!")
+            return }
+        
         
         guard isOriginal(word: answer) else {
             wordError(title: "Word used already", message: "Be more original!")
@@ -66,6 +88,7 @@ struct ContentView: View {
         
         withAnimation {
             usedWords.insert(answer, at: 0)
+            score += answer.count
         }
         newWord = ""
     }
@@ -83,9 +106,9 @@ struct ContentView: View {
     }
     
     
-    
+ 
     func isOriginal(word: String) -> Bool {
-        !usedWords.contains(word)
+        !usedWords.contains(word) && word != rootWord
     }
     
     
