@@ -85,7 +85,7 @@ struct ContentView: View {
     
     
     func isOriginal(word: String) -> Bool {
-        usedWords.contains(word)
+        !usedWords.contains(word)
     }
     
     
@@ -96,7 +96,6 @@ struct ContentView: View {
         for letter in word {
             if let pos = tempWord.firstIndex(of: letter) {
                 tempWord.remove(at: pos)
-                
             } else {
                 return false
             }
